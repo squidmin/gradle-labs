@@ -1,0 +1,104 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '2.7.10'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+description = 'Gradle learning labs'
+
+group = 'org.squidmin'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    javaMainClass = "org.squidmin.gradlelabs.GradleLabsApplication"
+    set('springCloudVersion', "2021.0.6")
+}
+
+application {
+    mainClassName = javaMainClass
+}
+
+springBoot {
+    mainClass = 'org.squidmin.gradlelabs.GradleLabsApplication'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Test dependencies
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework:spring-test:5.3.4'
+    testImplementation 'org.springframework.boot:spring-boot-test:2.4.3'
+}
+
+if (project.hasProperty("args")) {
+    ext.cmdargs = project.getProperty("args")
+} else {
+    ext.cmdargs = "ls"
+}
+
+tasks.register('cmdLineJavaExec', JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = javaMainClass
+    args cmdargs.split()
+}
+
+/*
+ * project.getProperty() throws a MissingPropertyException when a property is not defined.
+ * Unlike project properties, System.getProperty() returns a null value when a property is not defined.
+ * The below code configures the Gradle project to use a project property.
+ * Test project properties using this command:
+ *   ./gradlew propertyTypes -Dargs=lorem -Pargs=ipsum
+ */
+tasks.register('propertyTypes') {
+    doLast {
+        if (project.hasProperty("args")) {
+            println "Project property value [" + project.getProperty("args") + "]"
+        }
+        println "System property value [" + System.getProperty("args") + "]"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+
+    systemProperty 'arg_1', System.getProperty('arg_1')
+
+    testLogging {
+        // Make sure output from standard out or error is shown in Gradle output.
+        showStandardStreams = true
+
+        // Or we use events method:
+        // events 'standard_out', 'standard_error'
+
+        // Or set property events:
+        // events = ['standard_out', 'standard_error']
+
+        // Instead of string values we can use enum values:
+//         events org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
+//                org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
+    }
+}
