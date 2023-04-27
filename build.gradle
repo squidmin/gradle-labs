@@ -41,7 +41,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok'
 
     // Test dependencies
     testCompileOnly 'org.projectlombok:lombok:1.18.12'
@@ -90,6 +89,8 @@ tasks.named('test') {
     testLogging {
         // Make sure output from standard out or error is shown in Gradle output.
         showStandardStreams = true
+
+        events "passed", "skipped", "failed"
 
         // Or we use events method:
         // events 'standard_out', 'standard_error'

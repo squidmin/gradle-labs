@@ -3,13 +3,81 @@
 Gradle learning labs.
 
 
-## CLI quickstart
+## Install & build
 
-
-### Run the jar
 
 <details>
-<summary>Using Gradle</summary>
+<summary>Build the JAR using Gradle</summary>
+
+```shell
+./gradlew clean build
+```
+
+```shell
+./gradlew clean build -x test
+```
+
+```shell
+./gradlew clean build testClasses -x test
+```
+
+</details>
+
+
+<details>
+<summary>Add manifest file</summary>
+
+```shell
+jar -cmvf \
+  ./build/tmp/jar/MANIFEST.MF \
+  ./build/libs/gradle-labs-0.0.1-SNAPSHOT.jar \
+  ./build/classes/java/main/org/squidmin/gradlelabs/GradleLabsApplication.class
+```
+
+</details>
+
+
+<details>
+<summary>Build a container image</summary>
+
+```shell
+docker build \
+  --build-arg GCP_PROJECT_ID=PROJECT_ID \
+  -t gradle-labs .
+```
+
+Example:
+
+```shell
+docker build -t \
+  --build-arg GCP_PROJECT_ID=lofty-root-305785 \
+  gradle-labs .
+```
+
+</details>
+
+
+<details>
+<summary>Run an interactive container instance</summary>
+
+```shell
+docker run \
+  --rm -it \
+  -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
+  -v $HOME/.config/gcloud:/root/.config/gcloud \
+  -v $HOME/.m2:/root/.m2 \
+  gradle-labs
+```
+
+</details>
+
+
+<details>
+<summary>Run the JAR using Gradle</summary>
+
+Run the following commands either:
+- from the `ENTRYPOINT` in the `Dockerfile`, or
+- at the terminal prompt in an interactive container instance.
 
 Use `-P=args` to set Gradle project properties.
 
@@ -30,7 +98,20 @@ Example:
 
 
 <details>
-<summary>Without Gradle</summary>
+<summary>Run the JAR without Gradle</summary>
+
+
+### `exec java` command
+
+```shell
+exec java -jar \
+  -Dspring.profiles.active=local \
+  -DGOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
+  ./build/libs/spring-rest-labs-0.0.1-SNAPSHOT.jar
+```
+
+
+### `java` command
 
 Set system properties using `-Darg`, where `arg` is the argument name.
 
@@ -47,22 +128,17 @@ java -Dkey_1=ARG_A -Dkey_2=ARG_B [...] -Dkey_n=ARG_N -jar gradle-labs-0.0.1-SNAP
 Example:
 
 ```shell
-java -Dfirst=val_a -Dsecond=val_b -jar gradle-labs-0.0.1-SNAPSHOT.jar lorem ipsum dolor
+java -Dfirst=val_a -Dsecond=val_b -Dspring.profiles.active=local -jar \
+  gradle-labs-0.0.1-SNAPSHOT.jar arg_1 arg_2 arg_3
 ```
+
 
 </details>
 
 
-### Application tasks
+---
 
-<details>
-<summary>List the tasks available</summary>
-
-```shell
-./gradlew tasks
-```
-
-</details>
+## Tasks
 
 
 ### Build tasks
@@ -82,6 +158,22 @@ java -Dfirst=val_a -Dsecond=val_b -jar gradle-labs-0.0.1-SNAPSHOT.jar lorem ipsu
 
 ```shell
 ./gradlew build
+```
+
+</details>
+
+
+<details>
+<summary>Assemble the project and skip tests</summary>
+
+```shell
+./gradlew build -x test
+```
+
+or
+
+```shell
+./gradlew build testClasses -x test
 ```
 
 </details>
@@ -164,6 +256,18 @@ java -Dfirst=val_a -Dsecond=val_b -jar gradle-labs-0.0.1-SNAPSHOT.jar lorem ipsu
 
 ```shell
 ./gradlew wrapper
+```
+
+</details>
+
+
+### Application tasks
+
+<details>
+<summary>List the tasks available</summary>
+
+```shell
+./gradlew tasks
 ```
 
 </details>
@@ -310,9 +414,7 @@ To see more detail about a task, run:
 ---
 
 
-### Reference Documentation
-
-For further reference, please consider the following sections:
+### Other references
 
 * [Official Gradle documentation](https://docs.gradle.org)
 * [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.7.10/gradle-plugin/reference/html/)
