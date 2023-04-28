@@ -65,6 +65,9 @@ docker build -t \
 </details>
 
 
+
+## Run the application
+
 <details>
 <summary>Run an interactive container instance</summary>
 
