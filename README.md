@@ -2,6 +2,14 @@
 
 Gradle learning labs.
 
+Made with:
+- **IntelliJ IDEA 2023.1 (Ultimate Edition)**
+- **openjdk 11.0.17**
+- **Gradle 7.6.1**
+
+
+---
+
 
 ## Install & build
 
